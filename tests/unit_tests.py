@@ -326,6 +326,19 @@ class ArticleTestCase(unittest.TestCase):
         self.assertEqual(SUMMARY, self.article.summary)
         self.assertCountEqual(KEYWORDS, self.article.keywords)
 
+    @print_test
+    def test_ignore_patterns(self):
+        html = mock_resource_with('backstage.com1','html')
+        a = Article("http://example.com")
+        a.download(html)
+        a.parse()
+        self.assertEqual(len(a.text),178)
+        a = Article("http://example.com",IGNORE_PATTERNS=[
+                    re.compile("under review",re.IGNORECASE)])
+        a.download(html)
+        a.parse()
+        self.assertEqual(len(a.text),850)
+
 
 class TestDownloadScheme(unittest.TestCase):
     @print_test

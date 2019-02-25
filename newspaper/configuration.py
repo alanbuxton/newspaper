@@ -38,6 +38,14 @@ class Configuration(object):
         # max number of urls we cache for each news source
         self.MAX_FILE_MEMO = 20000
 
+        # Do not analyse any html nodes which match any of these regexes
+        # e.g. [re.compile("(?=.*cookies)(?=.*site)",re.IGNORECASE),]
+        # tries to ignore overbearing cookie notices
+        # Note: The ignored node(s) may be related to other nodes in the DOM,
+        # so this parameter does not guarantee that the ignored text will not
+        # appear in the final extracted text
+        self.IGNORE_PATTERNS = []
+
         # Cache and save articles run after run
         self.memoize_articles = True
 

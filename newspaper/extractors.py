@@ -14,7 +14,6 @@ __copyright__ = 'Copyright 2014, Lucas Ou-Yang'
 import copy
 import logging
 import re
-import re
 from collections import defaultdict
 
 from dateutil.parser import parse as date_parser
@@ -1015,7 +1014,11 @@ class ContentExtractor(object):
         """
         nodes_to_check = []
         for tag in ['p', 'pre', 'td']:
-            items = self.parser.getElementsByTag(doc, tag=tag)
+            all_items = self.parser.getElementsByTag(doc, tag=tag)
+            # only retain items if none of the IGNORE_PATTERNS match
+            items = [x for x in all_items if not any(
+                         re.search(r,self.parser.getText(x))
+                         for r in self.config.IGNORE_PATTERNS)]
             nodes_to_check += items
         return nodes_to_check
 
