@@ -813,7 +813,9 @@ class ContentExtractor(object):
             upscore = int(word_stats.get_stopword_count() + boost_score)
 
             parent_node = self.parser.getParent(node)
-            self.update_score(parent_node, upscore)
+            if self.is_not_ignorable(parent_node):
+                self.update_score(parent_node, upscore)
+
             self.update_node_count(parent_node, 1)
 
             if parent_node not in parent_nodes:
@@ -823,7 +825,8 @@ class ContentExtractor(object):
             parent_parent_node = self.parser.getParent(parent_node)
             if parent_parent_node is not None:
                 self.update_node_count(parent_parent_node, 1)
-                self.update_score(parent_parent_node, upscore / 2)
+                if self.is_not_ignorable(parent_parent_node):
+                    self.update_score(parent_parent_node, upscore / 2)
                 if parent_parent_node not in parent_nodes:
                     parent_nodes.append(parent_parent_node)
             cnt += 1
@@ -1016,11 +1019,18 @@ class ContentExtractor(object):
         for tag in ['p', 'pre', 'td']:
             all_items = self.parser.getElementsByTag(doc, tag=tag)
             # only retain items if none of the IGNORE_PATTERNS match
-            items = [x for x in all_items if not any(
-                         re.search(r,self.parser.getText(x))
-                         for r in self.config.IGNORE_PATTERNS)]
+            items = [x for x in all_items if self.is_not_ignorable(x)]
             nodes_to_check += items
         return nodes_to_check
+
+    def is_not_ignorable(self, node):
+        """Returns True if the text in this node does not match
+        any of the IGNORE_PATTERNS regexes. We should calculate
+        scores for any nodes that are not ignorable, and disregard
+        nodes that are ignorable
+        """
+        return (not any(re.search(r,self.parser.getText(node))
+                for r in self.config.IGNORE_PATTERNS))
 
     def is_table_and_no_para_exist(self, e):
         sub_paragraphs = self.parser.getElementsByTag(e, tag='p')

@@ -337,7 +337,7 @@ class ArticleTestCase(unittest.TestCase):
                     re.compile("under review",re.IGNORECASE)])
         a.download(html)
         a.parse()
-        self.assertEqual(len(a.text),850)
+        self.assertEqual(len(a.text),450)
 
 
 class TestDownloadScheme(unittest.TestCase):
