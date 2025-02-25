@@ -72,7 +72,7 @@ class ContentExtractor(object):
         """Fetch the authors of the article, return as a list
         Only works for english articles
         """
-        _digits = re.compile('\d')
+        _digits = re.compile(r'\d')
 
         def contains_digits(d):
             return bool(_digits.search(d))
@@ -98,17 +98,17 @@ class ContentExtractor(object):
             ['Lucas Ou-Yang', 'Alex Smith']
             """
             # Remove HTML boilerplate
-            search_str = re.sub('<[^<]+?>', '', search_str)
+            search_str = re.sub(r'<[^<]+?>', '', search_str)
 
             # Remove original By statement
-            search_str = re.sub('[bB][yY][\:\s]|[fF]rom[\:\s]', '', search_str)
+            search_str = re.sub(r'[bB][yY][\:\s]|[fF]rom[\:\s]', '', search_str)
 
             search_str = search_str.strip()
 
             # Chunk the line by non alphanumeric tokens (few name exceptions)
             # >>> re.split("[^\w\'\-\.]", "Tyler G. Jones, Lucas Ou, Dean O'Brian and Ronald")
             # ['Tyler', 'G.', 'Jones', '', 'Lucas', 'Ou', '', 'Dean', "O'Brian", 'and', 'Ronald']
-            name_tokens = re.split("[^\w\'\-\.]", search_str)
+            name_tokens = re.split(r"[^\w\'\-\.]", search_str)
             name_tokens = [s.strip() for s in name_tokens]
 
             _authors = []
@@ -379,7 +379,7 @@ class ContentExtractor(object):
         """
         total_feed_urls = []
         for category in categories:
-            kwargs = {'attr': 'type', 'value': 'application\/rss\+xml'}
+            kwargs = {'attr': 'type', 'value': r'application\/rss\+xml'}
             feed_elements = self.parser.getElementsByTag(
                 category.doc, **kwargs)
             feed_urls = [e.get('href') for e in feed_elements if e.get('href')]
@@ -614,7 +614,7 @@ class ContentExtractor(object):
         if regex:
             doc_or_html = re.sub('<[^<]+?>', ' ', str(doc_or_html))
             doc_or_html = re.findall(
-                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
+                r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
                 '(?:%[0-9a-fA-F][0-9a-fA-F]))+', doc_or_html)
             doc_or_html = [i.strip() for i in doc_or_html]
             return doc_or_html or []

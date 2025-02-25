@@ -765,6 +765,7 @@ class TestDownloadPdf(unittest.TestCase):
 
     @print_test
     def test_article_pdf_ignoring(self):
+        ''' Needs internet access to pass'''
         empty_pdf = "%PDF-"  # empty PDF constant
         a = Article(url='https://www.adobe.com/pdf/pdfs/ISO32000-1PublicPatentLicense.pdf',
                     ignored_content_types_defaults={"application/pdf": empty_pdf,
